@@ -1,0 +1,25 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Fundamentos de estadística"
+  author: "Felipe González y Teresa Ortiz"
+  chapters:
+    - index.qmd
+    - numericos.qmd
+    - categoricos.qmd
+    - analisis-datos.qmd
+    - inferencia.qmd
+    - pruebas-hipotesis.qmd
+    - remuestreo-bootstrap.qmd
+    - intro-bayesiana-1.qmd
+    - intro-bayesiana-2.qmd
+
+bibliography: referencias.bib
+
+format:
+  html:
+    theme: cerulean
+    lang: es
+

@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.466">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Fundamentos de estadística - 6&nbsp; Remuestreo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "Sín resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la busqueda",
+    "search-hide-matches-text": "Esconder resultados adicionales",
+    "search-more-match-text": "hay más resultados en este documento",
+    "search-more-matches-text": "más resultados en este documento",
+    "search-clear-button-title": "Borrar",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Eviar"
+  }
+}</script>
+
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script><script src="site_libs/quarto-nav/headroom.min.js"></script><script src="site_libs/clipboard/clipboard.min.js"></script><script src="site_libs/quarto-search/autocomplete.umd.js"></script><script src="site_libs/quarto-search/fuse.min.js"></script><script src="site_libs/quarto-search/quarto-search.js"></script><meta name="quarto:offset" content="./"><link href="/intro-bayesiana-1.html" rel="next"><link href="/pruebas-hipotesis.html" rel="prev"><script src="site_libs/quarto-html/quarto.js"></script><script src="site_libs/quarto-html/popper.min.js"></script><script src="site_libs/quarto-html/tippy.umd.min.js"></script><script src="site_libs/quarto-html/anchor.min.js"></script><link href="site_libs/quarto-html/tippy.css" rel="stylesheet"><link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><script src="site_libs/bootstrap/bootstrap.min.js"></script><link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet"><link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet"></head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Remuestreo</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">Fundamentos de estadística</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Introducción</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./numericos.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Datos numéricos</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./categoricos.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Datos categóricos</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./analisis-datos.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Análisis exploratorio</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./inferencia.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Inferencia estadística</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./pruebas-hipotesis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Pruebas de hipótesis</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./remuestreo-bootstrap.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Remuestreo</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro-bayesiana-1.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introducción a inferencia bayesiana</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro-bayesiana-2.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Calibración bayesiana y Regularización</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Indice de contenidos</h2>
+   
+  <ul>
+  <li><a href="#ejemplo-estimación-e-intervalos-de-confianza" id="toc-ejemplo-estimación-e-intervalos-de-confianza" class="nav-link active" data-scroll-target="#ejemplo-estimación-e-intervalos-de-confianza">Ejemplo: estimación e intervalos de confianza</a></li>
+  <li><a href="#interpretación-de-intervalos-de-confianza" id="toc-interpretación-de-intervalos-de-confianza" class="nav-link" data-scroll-target="#interpretación-de-intervalos-de-confianza">Interpretación de intervalos de confianza</a></li>
+  <li><a href="#cómo-producir-intervalos-para-estimación" id="toc-cómo-producir-intervalos-para-estimación" class="nav-link" data-scroll-target="#cómo-producir-intervalos-para-estimación">Cómo producir intervalos para estimación</a></li>
+  <li><a href="#distribución-de-muestreo" id="toc-distribución-de-muestreo" class="nav-link" data-scroll-target="#distribución-de-muestreo">Distribución de Muestreo</a></li>
+  <li><a href="#aproximando-la-distribución-de-muestreo" id="toc-aproximando-la-distribución-de-muestreo" class="nav-link" data-scroll-target="#aproximando-la-distribución-de-muestreo">Aproximando la distribución de muestreo</a></li>
+  <li><a href="#distribución-de-muestreo-y-distribución-poblacional" id="toc-distribución-de-muestreo-y-distribución-poblacional" class="nav-link" data-scroll-target="#distribución-de-muestreo-y-distribución-poblacional">Distribución de muestreo y distribución poblacional</a></li>
+  <li><a href="#el-mundo-bootstrap" id="toc-el-mundo-bootstrap" class="nav-link" data-scroll-target="#el-mundo-bootstrap">El mundo bootstrap</a></li>
+  <li><a href="#experimento-de-simulación" id="toc-experimento-de-simulación" class="nav-link" data-scroll-target="#experimento-de-simulación">Experimento de simulación</a></li>
+  <li><a href="#cobertura-nominal-y-cobertura-real" id="toc-cobertura-nominal-y-cobertura-real" class="nav-link" data-scroll-target="#cobertura-nominal-y-cobertura-real">Cobertura nominal y cobertura real</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo" id="toc-ejemplo" class="nav-link" data-scroll-target="#ejemplo">Ejemplo</a></li>
+  </ul></li>
+  <li><a href="#ejemplo-estereogramas" id="toc-ejemplo-estereogramas" class="nav-link" data-scroll-target="#ejemplo-estereogramas">Ejemplo: estereogramas</a></li>
+  <li><a href="#bootstrap-con-muestras-complejas" id="toc-bootstrap-con-muestras-complejas" class="nav-link" data-scroll-target="#bootstrap-con-muestras-complejas"> <span class="header-section-number">6.1</span> Bootstrap con muestras complejas</a>
+  <ul class="collapse">
+  <li><a href="#ejemplo-conteo-rápido-2018" id="toc-ejemplo-conteo-rápido-2018" class="nav-link" data-scroll-target="#ejemplo-conteo-rápido-2018">Ejemplo: conteo rápido 2018</a></li>
+  </ul></li>
+  <li><a href="#ventajas-y-desventajas-del-bootstrap" id="toc-ventajas-y-desventajas-del-bootstrap" class="nav-link" data-scroll-target="#ventajas-y-desventajas-del-bootstrap">Ventajas y desventajas del bootstrap</a></li>
+  <li><a href="#sesgo" id="toc-sesgo" class="nav-link" data-scroll-target="#sesgo">Sesgo</a></li>
+  <li><a href="#bootstrap-y-estimadores-complejos-suavizadores" id="toc-bootstrap-y-estimadores-complejos-suavizadores" class="nav-link" data-scroll-target="#bootstrap-y-estimadores-complejos-suavizadores">Bootstrap y estimadores complejos: suavizadores</a></li>
+  <li><a href="#bootstrap-y-estimadores-complejos-tablas-de-perfiles" id="toc-bootstrap-y-estimadores-complejos-tablas-de-perfiles" class="nav-link" data-scroll-target="#bootstrap-y-estimadores-complejos-tablas-de-perfiles">Bootstrap y estimadores complejos: tablas de perfiles</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span id="remuestreo" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Remuestreo</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+
+</div>
+<section id="ejemplo-estimación-e-intervalos-de-confianza" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="ejemplo-estimación-e-intervalos-de-confianza">Ejemplo: estimación e intervalos de confianza</h2>
+<p>Regresamos a nuestro ejemplo anterior donde muestreamos 3 grupos, y nos preguntábamos acerca de la diferencia de sus medianas. En lugar de hacer pruebas de permutaciones (con gráficas o numéricas), podríamos considerar qué tan precisa es cada una de nuestras estimacione para las medianas de los grupos, por ejemplo.</p>
+<p>Nuestros resultados podríamos presentarlos como sigue:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Donde en rojo está nuestro estimador puntual de la mediana de cada grupo (la mediana muestral), y las rectas mustran un intervalo de 95% para nuestra estimación de la mediana: esto quiere decir que los valores poblacionales tienen probabilidad aproximada de 95% de estar dentro del intervalo.</p>
+<p>Este análisis comunica correctamente que tenemos incertidumbre alta acerca de nuestras estimaciones (especialmente grupos b y c), y que no tenemos mucha evidencia de que el grupo b tenga una mediana poblacional considerablemente más alta que a o c.</p>
+</section>
+<section id="interpretación-de-intervalos-de-confianza" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="interpretación-de-intervalos-de-confianza">Interpretación de intervalos de confianza</h2>
+<p>Generalmente, “intervalo de confianza” (de 90% de confianza, por ejemplo) significa, desde el punto de vista frecuentista:</p>
+<ul>
+<li>Cada muestra produce un intervalo distinto. Para el 90% de las muestras posibles, el intervalo cubre al valor poblacional.</li>
+<li>Así que con <em>alta probabilidad</em>, el valor poblacional está dentro del intervalo.</li>
+<li>Intervalos más anchos nos dan más incertidumbre acerca de dónde está el verdadero valor poblacional (y al revés para intervalos más angostos)</li>
+</ul>
+<p>Existen también “intervalos creíbles” (de 90% de probabilidad, por ejemplo), que se interpetan de forma bayesiana:</p>
+<ul>
+<li>Con alta probabilidad, creemos que el valor poblacional está dentro del intervalo creíble.</li>
+</ul>
+<p><strong>La técnica que veremos a continuación (bootstrap) se puede interpretar de las dos maneras</strong>.</p>
+<ul>
+<li>La interpretación bayesiana puede ser más natural</li>
+<li>La interpretación frecuentista nos da maneras empíricas de probar si los intervalos de confianza están bien calibrados o no: es un mínimo que “intervalos del 90%” debería satisfacer.</li>
+</ul>
+<p>Así que tomamos el punto de vista bayesiano en la intepretación, pero buscamos que nuestros intervalos cumplan o aproximen bien garantías frecuentistas (discutimos esto más adelante).</p>
+</section>
+<section id="cómo-producir-intervalos-para-estimación" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="cómo-producir-intervalos-para-estimación">Cómo producir intervalos para estimación</h2>
+<p>Existen muchas técnicas para construir estos intervalos que muestran la incertidumbre en nuestras estimaciones: métodos basados en distribuciones estándar, métodos paramétricos y no paramétricos, distintos métodos bayesianos (entonces se llaman intervalos creíbles o de probabilidad), etc.</p>
+<p>En este curso, como ejemplo, y también por ser una técnica versátil, presentaremos el <strong>bootstrap no paramétrico</strong> (ver <span class="citation" data-cites="bootefron">Efron y Tibshirani (<a href="#ref-bootefron" role="doc-biblioref">1993</a>)</span>), donde utilizaremos simulación (y poder de cómputo) para producir este tipo de intervalos, bajo ciertas condiciones de extracción de la muestra que discutiremos más adelante.</p>
+</section>
+<section id="distribución-de-muestreo" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="distribución-de-muestreo">Distribución de Muestreo</h2>
+<p>Supongamos que consideramos la población de casas de nuestro ejemplo anterior</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>casas_pob <span class="ot">&lt;-</span> casas <span class="sc">|&gt;</span> <span class="fu">select</span>(id, precio_miles, nombre_zona)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>casas_pob <span class="sc">|&gt;</span> <span class="fu">sample_n</span>(<span class="dv">20</span>) <span class="sc">|&gt;</span> <span class="fu">formatear_tabla</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="font-size: 15px; width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"> id </th>
+   <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;"> precio_miles </th>
+   <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;"> nombre_zona </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> 721 </td>
+   <td style="text-align:right;"> 275.0 </td>
+   <td style="text-align:left;"> StoneBr </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 237 </td>
+   <td style="text-align:right;"> 185.5 </td>
+   <td style="text-align:left;"> CollgCr </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 270 </td>
+   <td style="text-align:right;"> 148.0 </td>
+   <td style="text-align:left;"> Edwards </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 269 </td>
+   <td style="text-align:right;"> 120.5 </td>
+   <td style="text-align:left;"> IDOTRR </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 362 </td>
+   <td style="text-align:right;"> 145.0 </td>
+   <td style="text-align:left;"> BrkSide </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1152 </td>
+   <td style="text-align:right;"> 149.9 </td>
+   <td style="text-align:left;"> Edwards </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 973 </td>
+   <td style="text-align:right;"> 99.5 </td>
+   <td style="text-align:left;"> SawyerW </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1037 </td>
+   <td style="text-align:right;"> 315.5 </td>
+   <td style="text-align:left;"> Timber </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1092 </td>
+   <td style="text-align:right;"> 160.0 </td>
+   <td style="text-align:left;"> Somerst </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1286 </td>
+   <td style="text-align:right;"> 132.5 </td>
+   <td style="text-align:left;"> BrkSide </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1208 </td>
+   <td style="text-align:right;"> 200.0 </td>
+   <td style="text-align:left;"> CollgCr </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 540 </td>
+   <td style="text-align:right;"> 272.0 </td>
+   <td style="text-align:left;"> CollgCr </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 367 </td>
+   <td style="text-align:right;"> 159.0 </td>
+   <td style="text-align:left;"> NAmes </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 283 </td>
+   <td style="text-align:right;"> 207.5 </td>
+   <td style="text-align:left;"> NridgHt </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 52 </td>
+   <td style="text-align:right;"> 114.5 </td>
+   <td style="text-align:left;"> BrkSide </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 761 </td>
+   <td style="text-align:right;"> 127.5 </td>
+   <td style="text-align:left;"> NAmes </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 1297 </td>
+   <td style="text-align:right;"> 155.0 </td>
+   <td style="text-align:left;"> NAmes </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 822 </td>
+   <td style="text-align:right;"> 93.0 </td>
+   <td style="text-align:left;"> OldTown </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 956 </td>
+   <td style="text-align:right;"> 145.0 </td>
+   <td style="text-align:left;"> Crawfor </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> 790 </td>
+   <td style="text-align:right;"> 187.5 </td>
+   <td style="text-align:left;"> ClearCr </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<p>Y nos interesa saber, para la población, cuál es la mediana de los precios de casas. Suponemos que no tenemos acceso a los datos poblacionales, y decidimos diseñar una encuesta para tomar una muestra de 50 casas que fueron vendidas en cierto periodo. Suponemos una muestra aleatoria simple con reemplazo (la población es grande y no hay mucha diferencia entre hacerlo con o sin reemplazo) de tamaño fijo, por ejemplo <span class="math inline">\(n = 50\)</span></p>
+<p>Buscamos estimar la mediana poblacional con la mediana de nuestra muestra:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fun_muestra <span class="ot">&lt;-</span> <span class="cf">function</span>(x){</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">median</span>(x)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Como es de esperarse, distintas muestras dan distintas estimaciones de la mediana</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>casas_pob <span class="sc">|&gt;</span> <span class="fu">sample_n</span>(<span class="dv">50</span>, <span class="at">replace =</span> T) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">fun_muestra</span>(precio_miles))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  mediana
+    &lt;dbl&gt;
+1     156</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>casas_pob <span class="sc">|&gt;</span> <span class="fu">sample_n</span>(<span class="dv">50</span>, <span class="at">replace =</span> T) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">mediana =</span> <span class="fu">fun_muestra</span>(precio_miles))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  mediana
+    &lt;dbl&gt;
+1     145</code></pre>
+</div>
+</div>
+<p>En estimación, uno de los conceptos básicos el de la <strong>distribución de muestreo</strong>. La distribución de muestreo son los valores que puede tomar nuestro estimador bajo todas las posibles muestras que pudiéramos obtener.</p>
+<p>¿Por qué es importante este concepto? La <strong>distribución de muestreo del estimador nos indica qué tan lejos o cerca vamos a caer del verdadero valor poblacional que queremos estimar</strong>. No sabemos qué muestra vamos a obtener, pero con la distribución de muestreo podemos saber qué tan mal o bien nos puede ir y con qué probabilidades.</p>
+</section>
+<section id="aproximando-la-distribución-de-muestreo" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="aproximando-la-distribución-de-muestreo">Aproximando la distribución de muestreo</h2>
+<p>En nuestro ejemplo tenemos la población (esto normalmente no es cierto) y podemos extraer un número muy grande de muestras de tamaño 50. Calculamos el estimador para cada una de esas muestras. El código es simple:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Repetir 5000 veces</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mediana_muestras <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>, <span class="sc">~</span> casas_pob <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_n</span>(<span class="dv">50</span>, <span class="at">replace =</span> T) <span class="sc">|&gt;</span>  <span class="co"># muestra de 50</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mediana_precio =</span> <span class="fu">fun_muestra</span>(precio_miles)) <span class="sc">|&gt;</span> <span class="fu">pull</span>(mediana_precio)) <span class="co"># calcular mediana de la muestra</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora examinamos la distribución de los valores que obtuvimos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sims_dm <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">muestra =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(mediana_muestras), <span class="at">mediana_precio =</span> mediana_muestras)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>valor_poblacional <span class="ot">&lt;-</span> <span class="fu">median</span>(casas<span class="sc">$</span>precio_miles) </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sims_dm, <span class="fu">aes</span>(<span class="at">sample =</span> mediana_muestras)) <span class="sc">+</span> <span class="fu">geom_qq</span>(<span class="at">distribution =</span> stats<span class="sc">::</span>qunif) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">"Mediana muestral"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"f"</span>) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">"Distribución de muestreo para mediana (n = 50)"</span>) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> valor_poblacional, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">0.2</span>, <span class="at">y =</span> valor_poblacional<span class="sc">+</span><span class="dv">5</span>, <span class="at">label =</span> <span class="st">"Mediana poblacional"</span>, <span class="at">colour =</span> <span class="st">"red"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<ul>
+<li><strong>Con esta gráfica podemos juzgar qué tan lejos puede caer nuestra estimación muestral del valor poblacional</strong>. Cuanto más concentrada esté alrededor del valor poblacional, la probabilidad es más alta de que obtengamos una estimación precisa cuando tomemos una muestra particular. Podemos hacer un histograma también:</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/graf_1-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>Los cuantiles que cubren a un 95% de las muestras son:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(mediana_muestras <span class="sc">-</span> valor_poblacional , <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> 2.5% 97.5% 
+-21.5  21.9 </code></pre>
+</div>
+</div>
+<ul>
+<li>Esto quiere decir que si estimamos con una muestra el valor poblacional, esperamos con 95% de probabilidad que el error sea menos de unas 20 unidades. *<strong>Esta es la precisión de nuestro estimador.</strong></li>
+</ul>
+<p>Si usamos una muestra más grande (n = 200, por ejemplo) podemos obtener un resultado más preciso:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>Y como es de esperarse, vemos que muestras más grandes resultan en menos variablidad, y menor error de estimación.</p>
+<ul>
+<li>Mejores distribuciones de muestreo: más concentradas alrededor del verdadero valor poblacional</li>
+</ul>
+</section>
+<section id="distribución-de-muestreo-y-distribución-poblacional" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="distribución-de-muestreo-y-distribución-poblacional">Distribución de muestreo y distribución poblacional</h2>
+<p>Una confusión inicial que es común es entre la distribución de muestreo y la distribución poblacional. La poblacional muestra cómo se distribuyen los valores de la variable de interés:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(casas_pob, <span class="fu">aes</span>(<span class="at">x =</span> precio_miles)) <span class="sc">+</span> <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> valor_poblacional)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>Que es muy diferente que las distribuciones de muestreo de nuestros dos estimadores:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>g_dist_muestreo</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+</section>
+<section id="el-mundo-bootstrap" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="el-mundo-bootstrap">El mundo bootstrap</h2>
+<p>El problema que tenemos ahora es que normalmente sólo tenemos una muestra, así que no es posible calcular las distribuciones de muestreo como hicimos arriba. Sin embargo, podemos hacer lo siguiente:</p>
+<ol type="1">
+<li>Si tuviéramos la distribución poblacional, simulamos muestras para aproximar la distribución de muestreo de nuestro estimador, y así entender su variabilidad.</li>
+<li>Pero no tenemos la distribución poblacional</li>
+<li><strong>Sin embargo, podemos estimar la distribución poblacional con nuestros valores muestrales</strong></li>
+</ol>
+<p><strong>Mundo bootstrap</strong></p>
+<ol start="4" type="1">
+<li>Si usamos la estimación del inciso anterior, entonces usando 1 podríamos tomar muestras de nuestros datos muestrales, como si fueran de la población, y usando el mismo tamaño de muestra. El muestreo lo hacemos con reemplazo, como la muestra original.</li>
+<li>A la distribución resultante le llamamos <strong>distribución bootstrap</strong> de la muestra</li>
+<li>Usamos la distribución bootstrap de la muestra para estimar la variabilidad en nuestra estimación con <strong>la muestra original</strong>.</li>
+</ol>
+<p>Veamos que sucede para un ejemplo concreto. Primero extraemos nuestra muestra:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2112</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>muestra <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(casas_pob, <span class="dv">150</span>, <span class="at">replace =</span> T)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Esta muestra nos da nuestro estimador de la distribución poblacional:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bind_rows</span>(muestra <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="st">"muestra"</span>),</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    casas_pob <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">tipo =</span> <span class="st">"población"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">sample =</span> precio_miles, <span class="at">colour =</span> tipo, <span class="at">group =</span> tipo)) <span class="sc">+</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_qq</span>(<span class="at">distribution =</span> stats<span class="sc">::</span>qunif, <span class="at">alpha =</span> <span class="fl">0.7</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_colorblind</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Y vemos que la aproximación es razonable, especialmente en las partes centrales de la distribución. Usamos nuestra muestra para estimar la población.</p>
+<p>Para evaluar ahora la variabilidad de nuestro estimador, podemos extraer un número grande de muestras con reemplazo de tamaño 150 <strong>de la muestra</strong> - estamos en el mundo Bootstrap!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mediana_muestras <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>, <span class="sc">~</span> muestra <span class="sc">|&gt;</span>  </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sample_n</span>(<span class="dv">150</span>, <span class="at">replace =</span> T) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">mediana_precio =</span> <span class="fu">fun_muestra</span>(precio_miles)) <span class="sc">|&gt;</span> <span class="fu">pull</span>(mediana_precio)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y nuestra estimación de la distribución de muestreo es entonces:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>bootstrap <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">mediana =</span> mediana_muestras)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bootstrap, <span class="fu">aes</span>(<span class="at">sample =</span> mediana)) <span class="sc">+</span> <span class="fu">geom_qq</span>(<span class="at">distribution =</span> stats<span class="sc">::</span>qunif)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>Y podemos calcular ahora un intervalo de confianza del 90% simplemente calculando los cuantiles de esta distribución (no son los cuantiles de la muestra original!):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>limites_ic <span class="ot">&lt;-</span> <span class="fu">quantile</span>(mediana_muestras, <span class="fu">c</span>(<span class="fl">0.05</span>,  <span class="fl">0.95</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>()</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>limites_ic</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> 5% 95% 
+154 173 </code></pre>
+</div>
+</div>
+<p>Presentaríamos nuestro resultado como sigue: nuestra estimación puntual de la mediana es 165, con un intervalo de confianza del 90% de (154, 173)</p>
+</section>
+<section id="experimento-de-simulación" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="experimento-de-simulación">Experimento de simulación</h2>
+<p>En nuestro ejemplo, podemos ver varias muestras (por ejemplo 20) de tamaño 100, y vemos cómo se ve la aproximación a la distribución de la población:</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Podemos calcular las distribuciones de remuestreo para cada muestra bootstrap, y compararlas con la distribución de muestreo real.</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Cada una de estas distribuciones de remuestreo nos da un intervalo para estimar la mediana poblacional:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mediana_pob <span class="ot">&lt;-</span> <span class="fu">median</span>(casas<span class="sc">$</span>precio_miles)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>dist_boot <span class="sc">|&gt;</span> <span class="fu">group_by</span>(rep) <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">q05 =</span> <span class="fu">quantile</span>(precio_miles, <span class="fl">0.05</span>), <span class="at">q95 =</span> <span class="fu">quantile</span>(precio_miles, <span class="fl">0.95</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> rep, <span class="at">ymin =</span> q05, <span class="at">ymax =</span> q95)) <span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> mediana_pob, <span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_linerange</span>() </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Notese que aquí estamos intentando construir intervalos de 90% de cobertura, y logramos nuestro propósito aproximadamente.</p>
+</section>
+<section id="cobertura-nominal-y-cobertura-real" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="cobertura-nominal-y-cobertura-real">Cobertura nominal y cobertura real</h2>
+<p>¿Cómo sabemos que la cobertura nominal del 90% es cercana a la realidad? Sería muy malo que los intervalos fueran demasiado anchos (exageramos la variabilidad) o demasiado angostos (damos la idea de que nuestra estimación es más precisa de lo que realmente es). Que esto se cumpla depende de:</p>
+<ul>
+<li>Cuál es la estadística de interés</li>
+<li>Cómo es la población</li>
+<li>El tamaño de muestra y otros aspectos del muestreo</li>
+</ul>
+<p>Varias observaciones útiles se pueden consultar en <span class="citation" data-cites="timboot14">Hesterberg (<a href="#ref-timboot14" role="doc-biblioref">2015</a>)</span> y en <span class="citation" data-cites="bootefron">Efron y Tibshirani (<a href="#ref-bootefron" role="doc-biblioref">1993</a>)</span> (por ejemplo, el bootstrap no funciona bien para estadísticas como el mínimo o el máximo). En estas referencias también pueden consultarse recomendaciones de cómo mejorar intervalos basados en boostrap - los que vimos se llaman <em>intervalos de percentiles</em>, pero hay más opciones simples que se desempeñan mejor en ciertos casos.</p>
+<p><strong>Y siempre podemos hacer ejercicios de simulación bajo ciertos supuestos acerca de la población para una estadística dada, y estimar empíricamente si la cobertura es adecuada. </strong></p>
+<section id="ejemplo" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo">Ejemplo</h3>
+<p>Construimos para nuestra población varias muestras bootstrap con sus respectivos intervalos de cuantiles. ¿Qué porcentaje de veces cubrimos al verdadero valor?</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#rep_remuestreo &lt;- map(1:200, ~ muestras_boot(.x, B = 2000, fun_muestra = fun_muestra)) |&gt; bind_rows</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>rep_remuestreo <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"./datos/bootstrap_reps.csv"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Con nuestras muestras, checamos ahora nuestros intervalos y su cobertura</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>intervalos <span class="ot">&lt;-</span> rep_remuestreo <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(n, rep) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">inf =</span>  <span class="fu">quantile</span>(mediana, <span class="fl">0.05</span>), <span class="at">sup =</span> <span class="fu">quantile</span>(mediana, <span class="fl">0.95</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">valor_poblacional =</span> <span class="fu">median</span>(casas_pob<span class="sc">$</span>precio_miles))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'n'. You can override using the `.groups`
+argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(intervalos, <span class="fu">aes</span>(<span class="at">x =</span> rep, <span class="at">ymin =</span> inf, <span class="at">ymax =</span> sup)) <span class="sc">+</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fu">median</span>(casas_pob<span class="sc">$</span>precio_miles), <span class="at">colour =</span> <span class="st">"salmon"</span>) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_linerange</span>(<span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>n) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>La cobertura para nuestros intervalos es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>intervalos <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">cubre =</span> valor_poblacional <span class="sc">&gt;</span> inf <span class="sc">&amp;</span> valor_poblacional <span class="sc">&lt;</span> sup) <span class="sc">|&gt;</span> </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>     <span class="fu">group_by</span>(n) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">cobertura =</span> <span class="fu">mean</span>(cubre), </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>                               <span class="at">ee_cobertura =</span> (<span class="fu">sd</span>(cubre) <span class="sc">/</span><span class="fu">sqrt</span>(<span class="fu">n</span>())) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">3</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+      n cobertura ee_cobertura
+  &lt;dbl&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+1    50     0.895        0.022
+2   150     0.915        0.02 </code></pre>
+</div>
+</div>
+<p>Para este número de repeticiones, estos números son consistentes con la cobertura <em>nominal</em> de 90%.</p>
+</section>
+</section>
+<section id="ejemplo-estereogramas" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="ejemplo-estereogramas">Ejemplo: estereogramas</h2>
+<p>En este caso, queremos hacer inferencia sobre la diferencia de tiempo de reconocimiento de los grupos. Como discutimos antes, preferimos hacer comparaciones multiplicativas. En este caso particular, compararemos el cociente de las medias:</p>
+<p>Podemos adaptar el bootstrap en este caso para dos grupos: hacemos remuestreo de cada grupo, comparamos diferencias, y repetimos</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>fusion <span class="ot">&lt;-</span> <span class="fu">read_table</span>(<span class="st">"./datos/fusion_time.txt"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>muestra_boot <span class="ot">&lt;-</span> <span class="cf">function</span>(datos, grupo, medicion, fun_muestra, comparacion){</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    est_boot <span class="ot">&lt;-</span> datos <span class="sc">|&gt;</span> <span class="fu">group_by</span>({{ grupo }}) <span class="sc">|&gt;</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sample_n</span>(<span class="fu">n</span>(), <span class="at">replace =</span> T) <span class="sc">|&gt;</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">est =</span> <span class="fu">fun_muestra</span>( {{ medicion }})) <span class="sc">|&gt;</span> </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">spread</span>(nv.vv, est) <span class="sc">|&gt;</span> </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">comp =</span> {{ comparacion }}) <span class="sc">|&gt;</span> </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pull</span>(comp)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    est_boot</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="fu">muestra_boot</span>(fusion, nv.vv, time, median, VV <span class="sc">/</span> NV) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.59</code></pre>
+</div>
+</div>
+<p>La distribución de remuestreo es:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>reps_boot <span class="ot">&lt;-</span> <span class="fu">map_dbl</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">2000</span>, <span class="sc">~</span> <span class="fu">muestra_boot</span>(fusion, nv.vv, time, mean, VV <span class="sc">/</span> NV))</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">tibble</span>(<span class="at">cociente_boot =</span> reps_boot), <span class="fu">aes</span>(<span class="at">sample =</span> reps_boot)) <span class="sc">+</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>(<span class="at">distribution =</span> stats<span class="sc">::</span>qunif) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"f"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Cociente"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="384"></p>
+</div>
+</div>
+<p>y un intervalo de 90% sería:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(reps_boot, <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.95</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">2</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  5%  95% 
+0.46 0.91 </code></pre>
+</div>
+</div>
+<p>Y esta sería una forma de presentar nuestros resultados: hay probabilidad considerable de que el efecto de este tratamiento sea marginal (una reducción de 10%), aunque lo más probables es que tenga un efecto consdierable (reducción alrededor de 60% del tiempo de fusión).</p>
+</section>
+<section id="bootstrap-con-muestras-complejas" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="bootstrap-con-muestras-complejas"><span class="header-section-number">6.1</span> Bootstrap con muestras complejas</h2>
+<p>Cuando el esquema de muestreo es estratificado o complejo (polietápico), es posible adaptar el bootstrap para producir intervalos apropiados. La idea es:</p>
+<ul>
+<li><p>El esquema de remuestreo debe replicar el esquema con el que se seleccionó la muestra original.</p></li>
+<li><p><strong>Muestreo estratificado</strong>: hacemos muestras bootstrap de cada estrato por separado.</p></li>
+<li><p><strong>Muestreo complejo</strong>: dentro de estratos, seleccionamos muestras bootstrap de unidades primarias de muestreo. En este caso, a veces es necesario también reajustar los ponderadores para replicar su construcción original (ver bootstrap de Rao-Wu).</p></li>
+</ul>
+<section id="ejemplo-conteo-rápido-2018" class="level3 unnumbered">
+<h3 class="unnumbered anchored" data-anchor-id="ejemplo-conteo-rápido-2018">Ejemplo: conteo rápido 2018</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>estratificacion_tbl <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"datos/conteo_rapido/presidencia.csv"</span>, </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">skip =</span> <span class="dv">5</span>, <span class="at">delim =</span> <span class="st">"|"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(CLAVE_CASILLA, ID_ESTADO, ID_DISTRITO) <span class="sc">|&gt;</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ID_DISTRITO <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">estrato =</span> <span class="fu">interaction</span>(ID_ESTADO, ID_DISTRITO)) <span class="sc">|&gt;</span> </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(estrato)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(estratificacion_tbl) <span class="sc">|&gt;</span> <span class="fu">kable</span>() <span class="sc">|&gt;</span> <span class="fu">kable_paper</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> estrato </th>
+   <th style="text-align:right;"> n </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> 1.1 </td>
+   <td style="text-align:right;"> 488 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 2.1 </td>
+   <td style="text-align:right;"> 563 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 3.1 </td>
+   <td style="text-align:right;"> 551 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 4.1 </td>
+   <td style="text-align:right;"> 591 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 5.1 </td>
+   <td style="text-align:right;"> 550 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> 6.1 </td>
+   <td style="text-align:right;"> 504 </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>remesa_tbl <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"datos/conteo_rapido/REMESAS0100020000.txt"</span>, </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">1</span>, <span class="at">delim =</span> <span class="st">"|"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">estrato =</span> <span class="fu">interaction</span>(iD_ESTADO, ID_DISTRITO_FEDERAL)) <span class="sc">|&gt;</span> </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(estrato, TOTAL, JAMK, RAC, AMLO) <span class="sc">|&gt;</span> </span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(estratificacion_tbl)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ignoraremos casillas faltantes: lo cual sabemos que <em>en general no es una buena idea</em>. Primero usamos una aproximación de Taylor para estimar error estándar y los intervalos:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>diseño_cr <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">id =</span> <span class="sc">~</span><span class="dv">1</span>, <span class="at">strata =</span> <span class="sc">~</span>estrato, <span class="at">fpc =</span> <span class="sc">~</span> n, <span class="at">data =</span> remesa_tbl)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">svyratio</span>(<span class="sc">~</span> RAC <span class="sc">+</span> JAMK <span class="sc">+</span> AMLO, <span class="sc">~</span> TOTAL, diseño_cr) <span class="sc">|&gt;</span> </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">confint</span>() <span class="sc">|&gt;</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"candidato"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  candidato  `2.5 %` `97.5 %`
+  &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;
+1 RAC/TOTAL    0.220    0.225
+2 JAMK/TOTAL   0.158    0.162
+3 AMLO/TOTAL   0.532    0.538</code></pre>
+</div>
+</div>
+<p>Ahora utilizaremos bootstrap. Se puede hacer directamente con el paquete <em>survey</em>, por ejemplo:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>diseño_cr_boot <span class="ot">&lt;-</span> <span class="fu">as.svrepdesign</span>(diseño_cr, <span class="at">type =</span> <span class="st">"subbootstrap"</span>, <span class="at">replicates =</span> <span class="dv">1000</span>)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">svyratio</span>(<span class="sc">~</span> RAC <span class="sc">+</span> JAMK <span class="sc">+</span> AMLO, <span class="sc">~</span> TOTAL, diseño_cr_boot) <span class="sc">|&gt;</span> </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">confint</span>() <span class="sc">|&gt;</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>(<span class="at">rownames =</span> <span class="st">"candidato"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  candidato  `2.5 %` `97.5 %`
+  &lt;chr&gt;        &lt;dbl&gt;    &lt;dbl&gt;
+1 RAC/TOTAL    0.220    0.226
+2 JAMK/TOTAL   0.158    0.162
+3 AMLO/TOTAL   0.532    0.538</code></pre>
+</div>
+</div>
+<p>En este caso simple de muestreo estratificado, también podemos escribir nuestro propio código. Tenemos dos funciones:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># extrae muestra bootstrap estratificada</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>extraer_bootstrap <span class="ot">&lt;-</span> <span class="cf">function</span>(muestra, var_estrato){</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  remuestra <span class="ot">&lt;-</span> muestra <span class="sc">|&gt;</span> </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{ var_estrato }}) <span class="sc">|&gt;</span> </span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice_sample</span>( <span class="at">prop =</span> <span class="dv">1</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  remuestra</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co"># cálculo del estimador de razón para una muestra</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>estimar_razon <span class="ot">&lt;-</span> <span class="cf">function</span>(muestra, num, denom, var_estrato){</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  estimador <span class="ot">&lt;-</span> muestra <span class="sc">|&gt;</span> </span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>({{ var_estrato }}) <span class="sc">|&gt;</span> </span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">candidato =</span> <span class="fu">mean</span>({{ num }}), <span class="at">total =</span> <span class="fu">mean</span>({{ denom }}), <span class="at">n =</span> <span class="fu">first</span>(n)) <span class="sc">|&gt;</span> </span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">candidato =</span> n <span class="sc">*</span> candidato, <span class="at">total =</span> n <span class="sc">*</span> total) <span class="sc">|&gt;</span> </span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">prop =</span> <span class="fu">sum</span>(candidato) <span class="sc">/</span> <span class="fu">sum</span>(total))</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>  estimador</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Y ahora aplicamos repetidamente el estimador a las muestras bootstrap estratificadas:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>remuestreo_tbl <span class="ot">&lt;-</span> <span class="fu">map_df</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">500</span>, <span class="cf">function</span>(rep){</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  remuestra <span class="ot">&lt;-</span> <span class="fu">extraer_bootstrap</span>(remesa_tbl, estrato)</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  estimador <span class="ot">&lt;-</span> <span class="fu">estimar_razon</span>(remuestra, RAC, TOTAL, estrato)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">rep =</span> rep, <span class="at">est_rep =</span> estimador<span class="sc">$</span>prop)</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(remuestreo_tbl, <span class="fu">aes</span>(<span class="at">sample =</span> est_rep)) <span class="sc">+</span> <span class="fu">geom_qq</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(remuestreo_tbl <span class="sc">|&gt;</span> <span class="fu">pull</span>(est_rep), <span class="fu">c</span>(<span class="fl">0.025</span>, <span class="fl">0.975</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="dv">4</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  2.5%  97.5% 
+0.2204 0.2254 </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="ventajas-y-desventajas-del-bootstrap" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="ventajas-y-desventajas-del-bootstrap">Ventajas y desventajas del bootstrap</h2>
+<ul>
+<li>El bootstrap es una técnica versátil generalmente fácil de implementar (ventaja) - especialmente cuando a algún nivel podemos suponer que las muestras son idependientes e idénticamente distribuidas (desventaja).</li>
+</ul>
+<p>Por ejemplo: en muestreo estratificado, podemos hacer bootstrap sobre cada estrato por separado. En muestreo complejo, podemos hacer bootstrap de unidades primarias de muestreo, etc.</p>
+<ul>
+<li><p>Requiere más cómputo que fórmulas estándar (desventaja), pero tenemos flexibilidad (ventaja) para aplicar en estadísticas diferentes de manera muchas veces trivial (ventaja).</p></li>
+<li><p>Es una técnica estándar en el análisis de datos que se usa en un rango grande de aplicaciones (ventaja).</p></li>
+<li><p>En el caso de <em>muestras chicas</em> y ciertas distribuciones poblacionales, los intervalos <strong>bootstrap de percentiles</strong> que vimos aquí pueden ser un poco angostos y no cumplir la cobertura nominal por ejemplo, si la muestra es de tamaño &lt; 40. la cobertura puede ser de 90% en lugar de 95% en algunos casos (población normal, o de 80% en lugar de 95% en una poblacion exponencial), ver <span class="citation" data-cites="timboot14">Hesterberg (<a href="#ref-timboot14" role="doc-biblioref">2015</a>)</span>). Hay mejores opciones en estos casos (por ejempo, intervalos bootstrap-t, que se calculan fácilmente también).</p></li>
+<li><p>Finalmente, en casos donde tenemos la población total, o el supuesto de muestras aleatorias es dudoso, lo podemos utilizar más informalmente como un análisis de sensibilidad de nuestros resultados. Es una perturbación a los datos (que podemos combinar con otros tipos de perturbaciones) para juzgar qué tan fuertemente depende nuestro análisis de los datos que tenemos a mano.</p></li>
+</ul>
+</section>
+<section id="sesgo" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="sesgo">Sesgo</h2>
+<p>Algunos estimadores comunes (por ejemplo, cociente de dos cantidades aleatorias) pueden sufrir de **sesgo* grande, especialmente en el caso de muestras chicas. Esto afecta la cobertura, pues es posible que nuestros intervalos no tengan “cobertura simétrica”, por ejemplo. Para muchos estimadores, y muestras no muy chicas, esté sesgo tiende a ser poco importante y no es necesario hacer correcciones.</p>
+<p>Podemos evaluar el sesgo comparando la media de nuestras replicaciones bootstrap con el valor muestral que obtuvimos (para estadísticas funcionales, ver <span class="citation" data-cites="timboot14">Hesterberg (<a href="#ref-timboot14" role="doc-biblioref">2015</a>)</span>). Si el tamaño del sesgo es chico comparado con la dispersión de la distribución bootstrap (por ejemplo, menos de 20% de la desviación estándar, <span class="citation" data-cites="bootefron">Efron y Tibshirani (<a href="#ref-bootefron" role="doc-biblioref">1993</a>)</span>), no es muy importante hacer correcciones.</p>
+<p>En caso de que esta cantidad sea relativamente grande en relación a la dispersión de la distribución bootstrap, hay variantes los intervalos bootstrap de percentiles que mejoran esta situación (<span class="citation" data-cites="bootefron">Efron y Tibshirani (<a href="#ref-bootefron" role="doc-biblioref">1993</a>)</span>).</p>
+</section>
+<section id="bootstrap-y-estimadores-complejos-suavizadores" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="bootstrap-y-estimadores-complejos-suavizadores">Bootstrap y estimadores complejos: suavizadores</h2>
+<p>El bootstrap es una técnica versátil. Por ejemplo, podemos usarlo para juzgar la variabilidad de un suavizador:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>graf_casas <span class="ot">&lt;-</span> <span class="cf">function</span>(data){</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(data <span class="sc">|&gt;</span> <span class="fu">filter</span>(calidad_gral <span class="sc">&lt;</span> <span class="dv">7</span>), </span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">aes</span>(<span class="at">x =</span> area_habitable_sup_m2)) <span class="sc">+</span> </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> precio_m2_miles), <span class="at">alpha =</span> <span class="fl">0.75</span>) <span class="sc">+</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_smooth</span>(<span class="fu">aes</span>(<span class="at">y =</span> precio_m2_miles), <span class="at">method =</span> <span class="st">"loess"</span>, <span class="at">span =</span> <span class="fl">0.7</span>, </span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">method.args =</span> <span class="fu">list</span>(<span class="at">degree =</span> <span class="dv">1</span>, <span class="at">family =</span> <span class="st">"symmetric"</span>))     </span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">250</span>)</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>casas_muestra <span class="ot">&lt;-</span> <span class="fu">sample_frac</span>(casas, <span class="fl">0.2</span>)</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a><span class="fu">graf_casas</span>(casas_muestra)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="480"></p>
+</div>
+</div>
+<p>Podemos hacer bootstrap para juzgar la estabilidad del suavizador:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>suaviza_boot <span class="ot">&lt;-</span> <span class="cf">function</span>(x, data){</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># remuestreo</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>    muestra_boot <span class="ot">&lt;-</span> <span class="fu">sample_n</span>(data, <span class="fu">nrow</span>(data), <span class="at">replace =</span> T)</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>    ajuste <span class="ot">&lt;-</span> <span class="fu">loess</span>(precio_m2_miles <span class="sc">~</span> area_habitable_sup_m2, <span class="at">data =</span> muestra_boot, </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">degree =</span> <span class="dv">1</span>, <span class="at">span =</span> <span class="fl">0.7</span>, <span class="at">family =</span> <span class="st">"symmetric"</span>)</span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>    datos_grafica <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">area_habitable_sup_m2 =</span> <span class="fu">seq</span>(<span class="dv">25</span>, <span class="dv">250</span>, <span class="dv">5</span>))</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    ajustados <span class="ot">&lt;-</span> <span class="fu">predict</span>(ajuste, <span class="at">newdata =</span> datos_grafica)</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    datos_grafica <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">ajustados =</span> ajustados) <span class="sc">|&gt;</span> </span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">rep =</span> x)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>reps <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="sc">~</span> <span class="fu">suaviza_boot</span>(.x, casas_muestra <span class="sc">|&gt;</span> <span class="fu">filter</span>(calidad_gral <span class="sc">&lt;</span> <span class="dv">7</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ojo: la rutina loess no tienen soporte para extrapolación</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">graf_casas</span>(casas_muestra) <span class="sc">+</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">data =</span> reps, <span class="fu">aes</span>(<span class="at">y =</span> ajustados, <span class="at">group =</span> rep), <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">colour =</span> <span class="st">"red"</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Donde vemos que algunas cambios de pendiente del suavizador original no son muy interpretables (por ejemplo, para áreas chicas) y alta variabilidad en general en los extremos. Podemos hacer más iteraciones para calcular bandas de confianza:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>reps <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">200</span>, <span class="sc">~</span> <span class="fu">suaviza_boot</span>(.x, casas_muestra <span class="sc">|&gt;</span> <span class="fu">filter</span>(calidad_gral <span class="sc">&lt;</span> <span class="dv">7</span>))) <span class="sc">|&gt;</span> </span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>()</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ojo: la rutina loess no tienen soporte para extrapolación</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">graf_casas</span>(casas_muestra) <span class="sc">+</span> </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">data =</span> reps, <span class="fu">aes</span>(<span class="at">y =</span> ajustados, <span class="at">group =</span> rep), <span class="at">alpha =</span> <span class="fl">0.2</span>, <span class="at">colour =</span> <span class="st">"red"</span>) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-37-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="bootstrap-y-estimadores-complejos-tablas-de-perfiles" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="bootstrap-y-estimadores-complejos-tablas-de-perfiles">Bootstrap y estimadores complejos: tablas de perfiles</h2>
+<p>Podemos regresar al ejemplo de la primera sesión donde calculamos perfiles de los tomadores de distintos tés: en bolsa, suelto, o combinados:</p>
+<div class="cell">
+
+</div>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+
+<table class="table table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+  <tr>
+   <th style="text-align:left;"> price </th>
+   <th style="text-align:left;"> tea bag </th>
+   <th style="text-align:left;"> tea bag+unpackaged </th>
+   <th style="text-align:left;"> unpackaged </th>
+   <th style="text-align:right;"> promedio </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> p_upscale </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-0.71</span> </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-0.28</span> </td>
+   <td style="text-align:left;"> <span style="     color: black !important;">0.98</span> </td>
+   <td style="text-align:right;"> 28 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> p_variable </td>
+   <td style="text-align:left;"> <span style="     color: lightgray !important;">-0.12</span> </td>
+   <td style="text-align:left;"> <span style="     color: black !important;">0.44</span> </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-0.31</span> </td>
+   <td style="text-align:right;"> 36 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> p_cheap </td>
+   <td style="text-align:left;"> <span style="     color: black !important;">0.3</span> </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-0.53</span> </td>
+   <td style="text-align:left;"> <span style="     color: lightgray !important;">0.23</span> </td>
+   <td style="text-align:right;"> 2 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> p_branded </td>
+   <td style="text-align:left;"> <span style="     color: black !important;">0.62</span> </td>
+   <td style="text-align:left;"> <span style="     color: lightgray !important;">-0.16</span> </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-0.45</span> </td>
+   <td style="text-align:right;"> 25 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> p_private label </td>
+   <td style="text-align:left;"> <span style="     color: black !important;">0.72</span> </td>
+   <td style="text-align:left;"> <span style="     color: lightgray !important;">-0.22</span> </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-0.49</span> </td>
+   <td style="text-align:right;"> 5 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> p_unknown </td>
+   <td style="text-align:left;"> <span style="     color: black !important;">1.58</span> </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-0.58</span> </td>
+   <td style="text-align:left;"> <span style="     color: red !important;">-1</span> </td>
+   <td style="text-align:right;"> 3 </td>
+  </tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>Hacemos bootstrap sobre toda la muestra, y repetimos exactamente el mismo proceso de construción de perfiles:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>boot_perfiles <span class="ot">&lt;-</span> <span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, <span class="cf">function</span>(x){</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    te_boot <span class="ot">&lt;-</span> te <span class="sc">|&gt;</span> <span class="fu">sample_n</span>(<span class="fu">nrow</span>(te), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">calcular_perfiles</span>(te_boot) <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">rep =</span> x)</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span> <span class="fu">bind_rows</span>()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ahora resumimos y graficamos, esta vez de manera distinta:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>resumen_perfiles <span class="ot">&lt;-</span> boot_perfiles <span class="sc">|&gt;</span> <span class="fu">group_by</span>(how, price) <span class="sc">|&gt;</span> </span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(<span class="at">perfil_media =</span> <span class="fu">mean</span>(perfil), <span class="at">ymax =</span> <span class="fu">quantile</span>(perfil, <span class="fl">0.9</span>), <span class="at">ymin =</span> <span class="fu">quantile</span>(perfil, <span class="fl">0.10</span>)) </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'how'. You can override using the `.groups`
+argument.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>resumen_bolsa <span class="ot">&lt;-</span> resumen_perfiles <span class="sc">|&gt;</span> <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(how <span class="sc">==</span> <span class="st">"tea bag"</span>) <span class="sc">|&gt;</span> <span class="fu">select</span>(price, <span class="at">perfil_bolsa =</span> perfil_media)</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>resumen_perfiles <span class="ot">&lt;-</span> resumen_perfiles <span class="sc">|&gt;</span> <span class="fu">left_join</span>(resumen_bolsa) <span class="sc">|&gt;</span> </span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">price =</span> <span class="fu">fct_reorder</span>(price, perfil_bolsa))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Joining, by = "price"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(resumen_perfiles, <span class="fu">aes</span>(<span class="at">x =</span> price, <span class="at">y =</span> perfil_media, <span class="at">ymax =</span> ymax, <span class="at">ymin =</span> ymin)) <span class="sc">+</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="at">colour =</span> <span class="st">"red"</span>) <span class="sc">+</span> <span class="fu">geom_linerange</span>() <span class="sc">+</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span>how) <span class="sc">+</span> <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">colour =</span> <span class="st">"gray"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Perfil"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Precio"</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="remuestreo-bootstrap_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid" width="576"></p>
+</div>
+</div>
+<p>Nótese una deficiencia clara del bootstrap: para los que compran té suelto, en la muestra no existen personas que desconocen de dónde provienen su té (No sabe/No contestó). Esto produce un intervalo colapsado en 0 que no es razonable.</p>
+<p>Podemos remediar esto de varias maneras: quitando del análisis los que no sabe o no contestaron, agrupando en otra categoría, usando un modelo, o regularizar usando proporciones calculadas con conteos modificados: por ejemplo, agregando un caso de cada combinación (agregaría 18 personas “falsas” a una muestra de 290 personas).</p>
+
+
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-bootefron" class="csl-entry" role="doc-biblioentry">
+Efron, B., y R. Tibshirani. 1993. <span>«<span>An Introduction to the Bootstrap</span>»</span>. Miscellaneous. Macmillan Publishers Limited. All rights reserved.
+</div>
+<div id="ref-timboot14" class="csl-entry" role="doc-biblioentry">
+Hesterberg, Tim C. 2015. <span>«What teachers should know about the bootstrap: Resampling in the undergraduate statistics curriculum»</span>. <em>The American Statistician</em> 69 (4): 371-86.
+</div>
+</div>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiada");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./pruebas-hipotesis.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Pruebas de hipótesis</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./intro-bayesiana-1.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introducción a inferencia bayesiana</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+</body></html>

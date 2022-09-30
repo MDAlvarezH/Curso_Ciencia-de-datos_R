@@ -1,0 +1,15 @@
+## Introducción {-}
+
+En este curso repasaremos:
+
+- Básicos de análisis de datos
+- Inferencia: pruebas de hipótesis
+- Inferencia: técnicas de remuestreo
+- Inferencia bayesiana
+
+
+## Código y ligas
+
+- Repositorio: [Github](https://github.com/felipegonzalez/fundamentos-ine)
+- Estas notas: https://felipegonzalez.github.io/fundamentos-ine/inferencia.html
+

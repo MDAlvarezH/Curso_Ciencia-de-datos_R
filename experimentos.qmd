@@ -1,0 +1,123 @@
+## Experimentos y aleatorización
+
+En el escenario de arriba, nuestra pregunta era: ¿hay algo que esté causando diferencias en el proceso de interés? En ese caso, afortunadamente, teníamos
+una colección de datos de referencia cuando el sistema opera normalmente.
+
+Esto entra en nuestro escenario de inferencia causal, considerando el "tratamiento" como el momento de observación de los datos neuvos.
+
+Muchas veces, sin embargo, no tenemos datos históricos de referencia: 
+por ejemplo, ¿cómo se compara el entrenamiento X contra el Y para reducir los tiempos o errores de captura? ¿un medicamento mejora los resultados de los pacientes al final de 3 meses? 
+
+
+::: callout-tip
+Si controlamos el proceso generador de datos introduciendo
+**aleatorización** en la asignación del tratamiento, es posible construir una distribución de referencia con los datos observados. 
+:::
+
+
+Supongamos (@box78)  que un jardinero amateur quiere decidir qué fertilizante usar: el usual $A$ o uno
+nuevo $B$. El resultado que le interesa es el rendimiento de cada planta (cuantos kilos
+de jitomates produjo cada planta). El jardinero tiene 11 plantas, que estan en una línea. Quiere decidir si debería cambiar al nuevo fertilizante $B$ o
+quedarse con el anterior.
+
+
+El jardinero intuye que quizá no es buena idea poner en las primeras 5 plantas $A$ y luego en las últimas 6 $B$. La razón es que posiciones a lo largo de su hilera pueden recibir cantidades distintas de sol, de humedad, de nutrientes, etc. 
+
+Decide entonces distribuir al azar los tratamientos (5 de tipo a y 6 de tipo b). Obtiene los siguientes resultados:
+
+```{r}
+res_obs <- tibble(planta = 1:11,
+       T = c("a", "a", "b", "b", "a", "b", "b", "b", "a", "a", "b"),
+       y = c(29.9, 11.4, 26.6, 23.7, 25.3, 28.5, 14.2, 17.9, 16.5, 21.1, 24.3) / 2)
+res_obs |> arrange(T) |> kable() |> kable_paper()
+```
+
+Como resumen, puede utilizar la diferencia de medias entre los dos tratamientos:
+
+```{r}
+dif_obs <- res_obs |> group_by(T) |> 
+  summarise(media = mean(y)) |> 
+  pivot_wider(names_from = T, values_from = media) |> 
+  mutate(diferencia = round(b - a, 3))
+dif_obs |> kable() |> kable_paper(full_width = FALSE)
+```
+
+Y vemos que $B$ tuvo mejores resultados con esta estadística de prueba. 
+
+Sin embargo, por el momento no tenemos una **distribución de referencia** para poner en contexto ese valor, y entender si puede deberse simplemente a la variabilidad que existe en las plantas y el hecho de que comparamos dos grupos de estas plantas, aún cuando el tratamiento b sea equivalente a a.
+
+La idea original de Fisher fue la siguiente: 
+
+- Nuestra hipótesis nula es que los tratamientos a y b son iguales (es decir, si en los casos donde usamos b hubiéramos usado a hubiéramos obtenido los mismos resultados, y viceversa).
+- Bajo la hipótesis nula, esto implica que las etiquetas a y b no tienen significado, podríamos permutarlas y hubiéramos obtenido los mismos resultados. 
+- Esto implica que podemos permutar las etiquetas del tratamiento y evaluar
+la variación de la diferencia de tratamientos (debida a la variabilidad que existe en el crecimiento de las plantas).
+- Si repetimos esto para todas las posibles permutaciones, obtenemos nuestra distribución de referencia.
+
+::: callout-tip
+Nótese que para que este argumento funcione es crucial que el 
+tratamiento se asigne al azar. Si no es así, el jardinero por ejemplo
+podría poner fertilizante b en las plantas que reciben más sol (para
+optimizar su cosecha). En este caso, los tratamientos a y b están relacionados con los posibles resultado, y no tiene sentido permutar las etiquetas de los tratamientos *aún cuando la hipótesis nula sea cierta**.
+:::
+
+```{r}
+calc_permutacion <- function(datos_tbl, tratamiento){
+  # permutar
+  datos_perm_tbl <- datos_tbl |> 
+    mutate({{ tratamiento }} := sample({{ tratamiento }}))
+  # calcular estadística
+  datos_perm_tbl |> group_by({{ tratamiento }}) |> 
+    summarise(media = mean(y)) |> 
+    pivot_wider(names_from = {{ tratamiento }}, values_from = media) |> 
+    mutate(diferencia = round(b - a, 3))
+}
+```
+
+Por ejemplo:
+
+```{r}
+calc_permutacion(res_obs, T) |> kable() |> kable_paper(full_width = FALSE)
+```
+Y ahora podemos repetir un número grande de veces:
+
+```{r}
+referencia_tbl <- map_df(1:2000, function(rep){
+  calc_permutacion(res_obs, T) |> mutate(rep = rep)
+})
+referencia_tbl |> head() |> kable() |> 
+  kable_paper(full_width = FALSE)
+```
+
+Y hacemos lo mismo que hicimos en el ejemplo anterior:
+
+```{r}
+ggplot(referencia_tbl, aes(x = diferencia)) +
+  geom_histogram() + 
+  geom_vline(data = dif_obs, aes(xintercept = diferencia),
+             colour = "red") +
+    annotate("text", x = 1, y = 30, 
+     label = "diferencia observada", colour = "red", angle = 90)
+```
+
+En este caso, vemos que nuestra observación es consistente como proveniente de la distribución de referencia (construida con permutaciones). 
+
+**La diferencia que observamos** es consistente con la variabilidad en
+nuestra estadística de prueba bajo distintas aleatorizaciones si los tratamientos a y b son equivalentes. Nuestra conclusión es que no tenemos
+evidencia para preferir b sobre a. Podemos calcular el valor p de una cola:
+
+```{r}
+diferencia_obs <- dif_obs$diferencia
+referencia_tbl |> 
+  mutate(mejor_que_observado = diferencia > diferencia_obs) |> 
+  summarise(valor_p = mean(mejor_que_observado))
+```
+Bajo el supuesto de equivalencia de tratamientos, la probabilidad de 
+observar un resultado mejor del que observamos es más de 1/3.
+
+::: callout-tip
+El **valor p** de una cola es la probabilidad de observar el resultado que
+obtuvimos o uno más extremo *bajo la hipótesis nula*. Cuanto más chico es,
+más evidencia en contra de la hipótesis nula tenemos.
+:::
+

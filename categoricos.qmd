@@ -1,0 +1,317 @@
+# Datos categóricos
+
+En esta sección mostraremos cómo hacer distintos tipos de resúmenes para mediciones individuales. Consideraremos también el uso de estas descripciones para comparar distintos grupos (o *bonches* de datos, como les llamaba Tukey), aplicando repetidamente los mismos resúmenes a lo largo de esos distintos grupos.
+
+## Datos categóricos y tablas
+
+Una medición categórica es una que toma sus valores posibles en un conjunto que no es numérico. Consideremos los siguiente datos de 300 tomadores de té (@factominer08):
+
+```{r, message = FALSE, warning = FALSE}
+library(tidyverse)
+library(lubridate)
+library(kableExtra)
+```
+
+```{r}
+#| message: false
+#| echo: false
+# cargamos y traducimos los datos
+te_tbl <- read_csv("./datos/tea.csv") |> 
+   mutate(id = row_number()) |> 
+   select(id, Tea, How, sugar, how, price, age) |> 
+   rename(tipo = Tea, complementos = How, azucar = sugar, 
+          presentacion = how, precio = price, edad = age) |> 
+   mutate(tipo = recode(tipo, black = "negro", green = "verde", `Earl Grey` = "earl_grey"),
+          complementos = recode(complementos, alone = "solo", milk = "leche", 
+                                lemon = "limón", .default = "otros"),
+          azucar = recode(azucar, sugar = "con_azúcar", No.sugar = "sin_azúcar"),
+          presentacion = recode(presentacion, `tea bag`="bolsa", 
+                                unpackaged = "suelto", .default = "mixto"),
+          precio = recode(precio, p_upscale = "fino", p_branded = "de_marca",
+                          p_private_label = "marca_propia", p_variable = "variable",
+                          .default = "no_sabe"))
+sample_n(te_tbl, 10) |> kable() |> kable_paper(full_width = FALSE)
+```
+
+Mediciones como *tipo*, *presentación* o *azucar* son variables categóricas. Desde el punto de vista univariado, generalmente no es necesario resumir, sino simplemente agrupar y contar cuántas veces ocurre cada categoría. Por ejemplo
+
+```{r}
+tabla_1 <- te_tbl |> count(tipo) |> 
+   arrange(desc(n))
+tabla_1 |> kable() |> kable_paper(full_width = FALSE)
+```
+
+Usualmente es más útil reportar la porporción o porcentaje de casos por categoría
+
+```{r}
+tabla_2 <- te_tbl |> 
+   count(tipo) |> 
+   mutate(n_total = sum(n), prop = n / n_total) |> 
+   select(tipo, n_total, prop) |> 
+   mutate(across(where(is.numeric), round, 2)) |> 
+   arrange(desc(prop))
+tabla_2 |> kable() |> kable_paper(full_width = FALSE)
+```
+
+Podemos hacer varias variables juntas de la siguiente manera:
+
+```{r}
+perfiles_col_tbl <- te_tbl |> select(id, tipo, complementos, presentacion, azucar) |> 
+   pivot_longer(cols = tipo:azucar, names_to = "variable", values_to = "valor") |> 
+   count(variable, valor) |> 
+   group_by(variable) |> 
+   mutate(n_total = sum(n), prop = n / n_total) |>
+   mutate(prop = round(prop, 2)) |> 
+   arrange(desc(prop), .by_group = TRUE)
+perfiles_col_tbl |> kable() |> kable_paper(full_width = FALSE)
+```
+
+Para leer más fácil, imprimimos individualmente estas tablas, o hacemos algo como lo que sigue para mostrarlas todas juntas:
+
+```{r}
+perfiles_col_tbl |> 
+   ungroup() |> 
+   select(-variable, -n_total) |> 
+   kable() |>  
+   pack_rows(index = table(perfiles_col_tbl$variable)) |> 
+   kable_paper(full_width = FALSE)
+```
+
+## Comparando grupos con variables categóricas
+
+Este análisis generalmente es más interesante cuando comparamos grupos. Supongamos que nos interesa ver si existe una relación entre usar el tipo de té que toman estas personas y el uso de complementos como leche o limón. Naturalmente, 
+escogeríamos dividir por tipo de té, y ver qué complementos se usan con cada uno:
+
+```{r}
+perfiles_col_tbl <- te_tbl |> count(complementos, tipo) |> 
+   group_by(tipo) |> 
+   mutate(prop = n / sum(n)) |>
+   group_by(complementos) |> 
+   select(-n) |> 
+   pivot_wider(names_from = tipo, values_from = prop, values_fill = 0)
+perfiles_col_tbl |>  kable(digits = 2, caption = "Perfiles por columna") |> 
+  kable_paper(full_width = FALSE)
+```
+
+Comparando los **perfiles de las columnas** observamos variaciones interesantes: por ejemplo, los tomadores de Earl Grey tienden a usar más limón como complemento que otros grupos. Son resúmenes univariados que ahora comparamos a lo largo de grupos. Podemos hacer las comparaciones más simples si hacemos todas contra una columna **marginal** del uso general en la muestra de los distintos complementos
+
+```{r}
+#| message: false
+comp_tbl <- te_tbl |> count(complementos) |> mutate(total = n / sum(n))
+perfiles_col_tbl <- left_join(perfiles_col_tbl, comp_tbl) |> 
+      arrange(desc(total)) |> 
+      select(-n)
+perfiles_col_tbl |> kable(digits = 2) |> 
+  kable_paper(full_width = FALSE)
+```
+
+Si el tipo de té no influyera en los complementos, verías porcentajes muy
+similares en cada columna, pero vemos que hay coincidencias y diferencias entre los grupos de tomadores de té. Podemos expresar esto de manera simple calculando índices contra la columna de total:
+
+```{r}
+res_tbl <- perfiles_col_tbl |> 
+   mutate(across(where(is.numeric), ~ .x / total)) |> 
+   select(-total)
+res_tbl |> kable(digits = 2) |> 
+  kable_paper(full_width = FALSE)
+```
+
+Valores por encima de 1 indican columnas por arriba de la población general, y análogamente para valores por debajo de uno. Estas cantidades pueden escribirse en términos porcentuales, o se les puede restar 1 para terminar como una variación porcentual del promedio. A estas cantidades se les llama **residuales crudos**:
+
+```{r}
+res_tbl <- perfiles_col_tbl |> 
+   mutate(across(where(is.numeric) & !total, ~ .x / total - 1)) 
+res_tbl |> kable(digits = 2) |> 
+  kable_paper(full_width = FALSE)
+```
+
+Podemos finalmente marcar la tabla:
+
+```{r}
+res_tbl |>  mutate(across(where(is.numeric), round, 2)) |> 
+   mutate(across(where(is.numeric) & ! total, 
+                 ~ cell_spec(.x, color = ifelse(.x > 0.1, "black", 
+                                         ifelse(.x < -0.1, "red", "gray"))))) |>
+   arrange(desc(total)) |> 
+   kable(escape = FALSE, align = "r") |> 
+   kable_paper(full_width = FALSE)
+```
+
+::: callout-tip
+# Perfiles
+
+A este tipo de análisis de tablas cruzadas a veces se le llama **análisis de perfiles columna**. Nos permite entender cómo varía la distribución de la variable de los renglones según el grupo indicado por la columna. 
+
+- Desviaciones grandes en los residuales indican asociaciones fuertes entre la variable de los reglones y de las columnas 
+
+- Recordemos que este análisis aplica a la muestra de datos que tenemos. Columnas con pocos individuos tienden a mostrar más variación y debemos ser cuidadosos al generalizar.
+:::
+
+Podemos incluir también totales para ayudarnos a juzgar las variaciones:
+
+```{r, echo = FALSE}
+opts <- options(knitr.kable.NA = "")
+res_tbl |>
+   bind_rows(te_tbl |> count(tipo) |> 
+                mutate(total = 1) |> 
+                pivot_wider(names_from = tipo, values_from = n)) |> 
+   mutate(across(where(is.numeric), round, 2)) |> 
+   mutate(across(where(is.numeric) & ! total, 
+                 ~ cell_spec(.x, color = ifelse(.x > 0.1, "black", 
+                                         ifelse(.x < -0.1, "red", "gray"))))) |>
+   arrange(desc(total)) |> 
+   kable(escape = FALSE, align = "r") |> 
+   kable_paper(full_width = FALSE)
+```
+
+## Observación: perfiles renglón y columna
+
+El análisis también lo podemos hacer con los perfiles de los renglones. Los residuales crudos que usamos para interpretar son los mismos. La razón es la siguiente:
+
+Para los perfiles columna, si escribimos $n_{+j}$ como los totales por columna, y $n_{i+}$ los totales por renglón, tenemos que los perfiles columna son: $$c_{i,j} = \frac{n_{i,j}}{n_{+j}}$$ Escribimos también $c_i = \frac{n_{i+}}{n}$ y $r_j = \frac{n_{+j}}{n}$ como los porcentajes marginales por columna y por renglón respectivamente.
+
+Los residuales son entonces $$r_{i,j} = \frac{\frac{n_{i,j}}{n_{+,j}}} { \frac{n_{i,+}}{n}} - 1 = \frac{p_{i,j} - r_ic_j}{r_ic_j}$$ Nótese que no importa entonces cómo comencemos el cálculo, por renglones o por columnas, el resultado es el mismo.
+
+-   Discute qué sentido tiene comparar $p_{i,j}$ contra $r_ic_j$. ¿Qué interpretación tiene esta última cantidad?
+
+
+## Visualización de tablas cruzadas
+
+Para tablas más grandes, muchas veces las técnicas que mostramos arriba no son suficientes para entender y presentar patrones importantes en los datos. En estos casos, buscamos reducir la dimensionalidad de los datos para poder presentarlos en una gráfica de dos dimensiones.
+
+Podemos utilizar **análisis de correspondencias**. A grandes rasgos (ver [@izenman] para los detalles) buscamos una representación tal que:
+
+-   Cada categoría de las columnas está representada por una flecha que sale del origen de nuestra gráfica
+-   Cada categoría de los renglones está representada por un punto en nuestra gráfica
+-   Si proyectamos los puntos (renglones) sobre las direcciones de las columnas, entonces el tamaño de la proyección es lo más cercano posible (en dos dimensiones) al residual correspondiente de las tablas del análisis mostrado arriba.
+
+Para construir esta gráfica, entonces, existe un proceso de optimización que busca representar lo más fielmente los residuales del análisis mostrado arriba en dos dimensiones, y de esta forma buscamos recuperar una buena parte de la información de los residuales de una manera más compacta.
+
+## Ejemplo: tés y complementos
+
+```{r, fig.width =7, fig.height=6}
+library(ca)
+corr_te <- ca(table(te_tbl$complementos, te_tbl$tipo))
+plot(corr_te, map = "rowprincipal", arrows = c(FALSE, TRUE))
+```
+
+La contribución de cada dimensión a la aproximación se indica en los ejes. Como vemos en la gráfica, y la suma de las contribuciones nos da la calidad de la representación, que en este caso es perfecta.
+
+::: callout-tip
+- El **análisis de correspondencias** es un tema relativamente avanzado de estadística
+multivariada, y su definición precisa requiere de matemáticas más avanzadas 
+(por ejemplo la descomposición en valores singulares).
+
+- Cualquier hallazgo obtenido en este tipo de análisis debe ser verificado
+en las tablas correspondientes de perfiles
+- Hay distintos tipos de gráficas (*biplots*) asociadas al análisis de correspondencias,
+que privilegian representar mejor a distintos tipos de características de los datos
+
+:::
+
+## Ejemplo: robo en tiendas
+
+Consideramos los siguientes datos de robos en tiendas en Holanda por personas de distintas edades y genéros (@izenman). En este caso, las variables ya están cruzadas:
+
+```{r}
+hurto_tbl <- read_csv("./datos/hurto.csv") |> 
+   mutate(grupo = ifelse(grupo == "-12 h", "01-12 h", grupo),
+          grupo = ifelse(grupo == "-12 m", "01-12 m", grupo)) |> 
+   pivot_longer(ropa:otros, names_to = "departamento", values_to = "n") |> 
+   pivot_wider(names_from = grupo, values_from = n)
+hurto_tbl |> kable() |> 
+   kable_paper(full_width = FALSE)
+```
+
+Esta tabla es más grande y difícil de entender tal cual está. Comenzamos por examinar las marginales:
+
+```{r}
+departamentos_tbl <- hurto_tbl |> 
+   pivot_longer(cols = -departamento, names_to = "grupo", values_to = "n") |> 
+   group_by(departamento) |> 
+   summarise(n = sum(n)) |> 
+   mutate(prop = n / sum(n)) |> 
+   arrange(desc(prop))
+departamentos_tbl |> 
+   kable(digits = 2) |> 
+   kable_paper(full_width = FALSE)
+```
+
+```{r}
+grupos_tbl <- hurto_tbl |> 
+   pivot_longer(cols = -departamento, names_to = "grupo", values_to = "n") |> 
+   group_by(grupo) |> 
+   summarise(n = sum(n)) |> 
+   mutate(prop = n / sum(n)) |> 
+   arrange(desc(prop))
+grupos_tbl |> kable(digits = 2) |> 
+   kable_paper(full_width = FALSE)
+```
+
+Intentamos análisis de correspondencias para comparar los perfiles columna:
+
+```{r, fig.width=6, fig.height=6}
+hurto_df <- as.data.frame(hurto_tbl)
+rownames(hurto_df) <- hurto_tbl$departamento
+hurto_df$departamento <- NULL
+corr_hurto <- ca(hurto_df)
+grafica_datos <- plot(corr_hurto, map = "rowprincipal", arrows = c(FALSE, TRUE))
+```
+
+-   Según esta gráfica, ¿qué categorias de productos están sobrerrepresentadas en cada grupo de edad? ¿Cómo tendrían que verse el análisis de perfiles columna?
+
+Como se aprecia, en la siguiente tabla, es difícil entender los patrones generales en los datos:
+
+```{r}
+perfiles_hurto_tbl <- hurto_tbl |> 
+   pivot_longer(cols = -departamento, names_to = "producto", values_to = "n") |> 
+   group_by(producto) |> 
+   mutate(prop = n / sum(n)) |> 
+   select(-n) |> 
+   pivot_wider(names_from = producto, values_from = prop) 
+perfiles_hurto_tbl |> 
+   kable(digits = 2) |> 
+   kable_styling(font_size = 12) |> 
+   kable_paper()
+```
+
+```{r}
+res_hurto_tbl <- left_join(perfiles_hurto_tbl, departamentos_tbl |> rename(total = prop)) |> 
+    select(-n) |> 
+    #select(-bienes, -discos, -perfumes) |> 
+    mutate(across(where(is.numeric) & !total, ~ .x / total - 1)) |> 
+    mutate(across(where(is.numeric), round, 2)) 
+res_hurto_tbl |> 
+    mutate(across(where(is.numeric) & ! total, 
+                 ~ cell_spec(.x, color = ifelse(.x > 0.2, "black", 
+                                         ifelse(.x < -0.2, "red", "gray"))))) |>
+    select(-total) |> 
+    kable(escape = FALSE) |>
+    kable_styling(font_size = 12) |> 
+    kable_paper()
+```
+
+-   Compara tus conclusiones del mapa de correspondencias con esta información de los residuales
+
+Nota adicionalmente que el ordenamiento de las categorías en la primera dimensión del mapa de correspondencias ayuda a interpretar.
+
+```{r}
+dim_1 <- grafica_datos$cols[,1]
+columnas <- names(dim_1)
+columnas_ord <- columnas[order(dim_1)]
+res_hurto_tbl |> select(departamento, all_of(columnas_ord)) |> 
+    mutate(across(where(is.numeric), 
+                 ~ cell_spec(.x, color = ifelse(.x > 0.2, "black", 
+                                         ifelse(.x < -0.2, "red", "gray"))))) |>
+    kable(escape = FALSE) |>
+    kable_styling(font_size = 12) |> 
+    kable_paper()
+```
+
+#### Otras dimensiones {.unnumbered}
+
+En el caso anterior, la calidad de la representación es cercana al 80%. Existen algunas desviaciones que la posiblemente la gŕafica no explica del todo, y algunas proyecciones son aproximadas. Podemos ver cómo se ven otras dimensiones de este análisis para entender desviaciones adicionales:
+
+```{r}
+plot(corr_hurto, dim = c(1, 3), map = "rowprincipal", arrows = c(FALSE, TRUE))
+```
