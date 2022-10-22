@@ -1,0 +1,7 @@
+[Baumer_Kaplan_Horton]_Modern Data Science with R
+[Chang]_R graphics cookbook
+[Duursman_Powell_Stone]_A Learning Guide to R
+[Duursman_Powell_Stone]_A Learning Guide to R_Solution Exercises
+[Grolemund_Wickham]_Hands-On Programming with R (2015)
+[Long_Teetor]_R Cookbook
+[Wickham_Grolemund]_R for Data Science_(2017)
